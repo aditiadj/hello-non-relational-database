@@ -23,6 +23,15 @@ characters = [{
     style: 'tanker',
     xp: 600,
     type: 'physical'
+  },
+  {
+    name: 'Erick',
+    age: 23,
+    abilities: {
+      style: 'assasin',
+      xp: 450,
+      type: 'mermaid'
+    },
   }
 }]
 

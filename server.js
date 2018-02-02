@@ -1,49 +1,28 @@
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
+const express = require(`express`);
+const bodyParser = require(`body-parser`);
+const mongoose = require(`mongoose`);
 
-let db = mongoose.connection;
-db.on('error', console.log.bind(console, 'Connection error :'));
-db.once('open', () => {
-  console.log('MongoDB connected');
+const api = require(`./api/routes`);
+
+const app = express();
+const db = mongoose.connection;
+
+const url = `mongodb://localhost/test`;
+const successMessage = `You're connected to MongoDB`;
+const errorMessage = `Connection error : `;
+
+mongoose.connect(url);
+db.on(`error`, console.log.bind(console, errorMessage));
+db.once(`open`, () => {
+  console.log(successMessage);
 });
 
-let Schema = mongoose.Schema;
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
-let charactersSchema = new Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  age: {
-    type: String,
-    required: true,
-    default: 0
-  },
-  abilities: {}
-}, {
-  versionKey: false
-});
+//Access localhost:3000/api/
+app.use(`/api`, api);
 
-let Characters = mongoose.model('Characters', charactersSchema);
-
-let majin = new Characters({
-  name: 'Majin',
-  age: 18,
-  abilities: {
-    style: 'magician',
-    xp: 2250,
-    type: 'water element'
-  }
-});
-
-//POST data(save, create, insert)
-majin.save((err) => {
-  if (err) throw err;
-  console.log('Characters saved successfully!');
-});
-
-// GET all data (find)
-Characters.find((err, characters) => {
-  if (err) throw err;
-  console.log(characters);
-});
+module.exports = app;
